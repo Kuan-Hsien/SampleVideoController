@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Video Controller Sample</string>
+    <string name="description">Media Controls</string>
+</resources>
