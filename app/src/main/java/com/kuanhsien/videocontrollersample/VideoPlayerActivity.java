@@ -26,6 +26,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     private static final String TAG = "KEN_MOVIE";
     
+//    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
     private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
     
 
@@ -152,9 +153,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             mScreenWidth = constraintLayoutVideoContainer.getHeight();
             mScreenHeight = constraintLayoutVideoContainer.getWidth();
             mIsFullScreen = true;
+
+            changeVideoSize(mScreenHeight, mScreenWidth);
+        } else {
+            changeVideoSize(mScreenWidth, mScreenWidth);
         }
 
-        changeVideoSize(mScreenWidth, mScreenHeight);
         player.start();
     }
     // End MediaPlayer.OnPreparedListener
