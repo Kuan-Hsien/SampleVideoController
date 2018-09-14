@@ -147,6 +147,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         // set the video size first time
         mScreenWidth = constraintLayoutVideoContainer.getWidth();
         mScreenHeight = constraintLayoutVideoContainer.getHeight();
+
+        if (mScreenWidth > mScreenHeight) { //一開始為橫向，改為直向長寬
+            mScreenWidth = constraintLayoutVideoContainer.getHeight();
+            mScreenHeight = constraintLayoutVideoContainer.getWidth();
+            mIsFullScreen = true;
+        }
+
         changeVideoSize(mScreenWidth, mScreenHeight);
         player.start();
     }
@@ -276,6 +283,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             screenWidth = mScreenHeight;
             screenHeight = mScreenWidth;
             controller.setControlTimeout(controller.MODE_FULLSCREEN);
+            controller.updateFullScreen();
 
 
         } else {
@@ -283,8 +291,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
             setFullScreen(false);
             screenWidth = mScreenWidth;
-            screenHeight = mScreenHeight;
+            screenHeight = mScreenWidth;
             controller.setControlTimeout(controller.MODE_NORMAL);
+            controller.updateFullScreen();
         }
 
         Log.d("KEN_MOVIE", "onConfigurationChanged: " + newConfig);
@@ -376,10 +385,18 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         if (isFullScreen()) {
 
+            float max = Math.max(vWidth, vHeight);
+//             计算出缩放大小,取接近的正值
+            width = (int) Math.ceil((float) width / max);
+            height = (int) Math.ceil((float) height / max);
+
+            layoutParams = new RelativeLayout.LayoutParams(width,
+                    height);
+
             // 设置全屏
             // 设置SurfaceView的大小并居中显示
-            layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT);
+//            layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+//                    RelativeLayout.LayoutParams.MATCH_PARENT);
         } else {
             // 获取最大的倍数值，按大数值进行缩放
             float max = Math.max(vWidth, vHeight);
