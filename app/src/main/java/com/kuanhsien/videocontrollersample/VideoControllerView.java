@@ -40,8 +40,6 @@ import java.lang.ref.WeakReference;
 import java.util.Formatter;
 import java.util.Locale;
 
-//import your.resource.path;
-
 /**
  * A view containing controls for a MediaPlayer. Typically contains the
  * buttons like "Play/Pause", "Rewind", "Fast Forward" and a progress
@@ -83,7 +81,7 @@ public class VideoControllerView extends FrameLayout {
     private Context             mContext;
     private ViewGroup           mAnchor;
     private View                mRoot;
-    ProgressBar         mProgress;
+    ProgressBar                 mProgress;
     private TextView            mEndTime, mCurrentTime;
     private boolean             mShowing;
     private boolean             mDragging;
@@ -322,11 +320,13 @@ public class VideoControllerView extends FrameLayout {
     // set the default timeout by MODE
     public void setControlTimeout(int mode) {
         if (mode == MODE_FULLSCREEN) {
+
             sDefaultTimeout = CONTROL_TIMEOUT_FULLSCREEN;
+            show(sDefaultTimeout);
 
         } else { // MODE_NORMAL
-            sDefaultTimeout = CONTROL_TIMEOUT;
 
+            sDefaultTimeout = CONTROL_TIMEOUT;
         }
     }
     
@@ -348,6 +348,7 @@ public class VideoControllerView extends FrameLayout {
         try {
             mAnchor.removeView(this);
             mHandler.removeMessages(SHOW_PROGRESS);
+
         } catch (IllegalArgumentException ex) {
             Log.w("MediaController", "already removed");
         }
@@ -387,7 +388,9 @@ public class VideoControllerView extends FrameLayout {
                 mProgress.setProgress( (int) pos);
             }
             int percent = mPlayer.getBufferPercentage();
+
             mProgress.setSecondaryProgress(percent * 10);
+            mProgress.setSecondaryProgress(mPlayer.getSecondaryProgress());
         }
 
         if (mEndTime != null)
@@ -719,27 +722,33 @@ public class VideoControllerView extends FrameLayout {
         boolean isFullScreen();
         void    toggleFullScreen();
         void    setVolume(float l, float r);
+        int     getSecondaryProgress();
         boolean isMute();
     }
     
     private static class MessageHandler extends Handler {
+
         private final WeakReference<VideoControllerView> mView; 
 
         MessageHandler(VideoControllerView view) {
             mView = new WeakReference<VideoControllerView>(view);
         }
+
         @Override
         public void handleMessage(Message msg) {
+
             VideoControllerView view = mView.get();
             if (view == null || view.mPlayer == null) {
                 return;
             }
             
             int pos;
+
             switch (msg.what) {
                 case FADE_OUT:
                     view.hide();
                     break;
+
                 case SHOW_PROGRESS:
                     pos = view.setProgress();
                     if (!view.mDragging && view.mShowing && view.mPlayer.isPlaying()) {
